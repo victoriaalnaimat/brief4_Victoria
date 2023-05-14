@@ -33,14 +33,14 @@ if (isset($_POST['payment'])) {
 
     $total_products = implode(', ', $cart_items_products);
 
-    $order_query = mysqli_query($conn, "SELECT * FROM `payments` WHERE name = '$name' AND mobile_number = '$mobile_number' AND email = '$email' AND payment_method = '$payment_method' AND address = '$address' AND total_products = '$total_products' AND total_price = '$cart_items_total'") or die('query failed');
+    $order_query = mysqli_query($conn, "SELECT * FROM `orders` WHERE name = '$name' AND mobile_number = '$mobile_number' AND email = '$email' AND payment_method = '$payment_method' AND address = '$address' AND total_products = '$total_products' AND total_price = '$cart_items_total'") or die('query failed');
 
     if ($cart_items_total == 0) {
         $message[] = 'your cart is empty!';
     } elseif (mysqli_num_rows($order_query) > 0) {
         $message[] = 'order placed already!';
     } else {
-        mysqli_query($conn, "INSERT INTO `payments`(user_id, name, mobile_number, email, payment_method, address, total_products, total_price, payment_date) VALUES('$user_id', '$name', '$mobile_number', '$email', '$payment_method', '$address', '$total_products', '$cart_items_total', '$payment_date')") or die('query failed');
+        mysqli_query($conn, "INSERT INTO `orders`(user_id, name, mobile_number, email, payment_method, address, total_products, total_price, payment_date) VALUES('$user_id', '$name', '$mobile_number', '$email', '$payment_method', '$address', '$total_products', '$cart_items_total', '$payment_date')") or die('query failed');
         mysqli_query($conn, "DELETE FROM `cart_items` WHERE user_id = '$user_id'") or die('query failed');
         $message[] = 'order placed successfully!';
     }
@@ -85,7 +85,7 @@ if (isset($_POST['payment'])) {
             echo '<p class="empty">your cart is empty</p>';
         }
         ?>
-        <div class="grand-total">Grand total : <span>$<?php echo $grand_total; ?>/-</span></div>
+        <div class="grand-total">Grand total : <span><?php echo $grand_total; ?>JD</span></div>
     </section>
 
     <section class="checkout">

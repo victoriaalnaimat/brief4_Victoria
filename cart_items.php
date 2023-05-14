@@ -6,9 +6,9 @@ session_start();
 
 $user_id = $_SESSION['user_id'];
 
-if (!isset($user_id)) {
+/*if (!isset($user_id)) {
     header('location:login.php');
-};
+};*/
 
 if (isset($_GET['delete'])) {
     $delete_id = $_GET['delete'];
@@ -51,11 +51,6 @@ if (isset($_POST['update_quantity'])) {
 
     <?php @include 'header.php'; ?>
 
-    <section class="heading">
-        <h3>shopping cart</h3>
-        <p> <a href="home.php">home</a> / cart </p>
-    </section>
-
     <section class="shopping-cart">
 
         <h1 class="title">products added</h1>
@@ -70,7 +65,7 @@ if (isset($_POST['update_quantity'])) {
             ?>
                     <div class="box">
                         <a href="cart_items.php?delete=<?php echo $fetch_cart_items['id']; ?>" class="fas fa-times" onclick="return confirm('delete this from cart?');"></a>
-                        <a href="view_page.php?pid=<?php echo $fetch_cart_items['pid']; ?>" class="fas fa-eye"></a>
+                        <a href="product_info.php?product_id=<?php echo $fetch_cart_items['product_id']; ?>" class="fas fa-eye"></a>
                         <img src="uploaded_img/<?php echo $fetch_cart_items['image']; ?>" alt="" class="image">
                         <div class="name"><?php echo $fetch_cart_items['name']; ?></div>
                         <div class="price">$<?php echo $fetch_cart_items['price']; ?>/-</div>
@@ -91,13 +86,13 @@ if (isset($_POST['update_quantity'])) {
         </div>
 
         <div class="more-btn">
-            <a href="cart.php?delete_all" class="delete-btn <?php echo ($grand_total > 1) ? '' : 'disabled' ?>" onclick="return confirm('delete all from cart?');">delete all</a>
+            <a href="cart_items.php?delete_all" class="delete-btn <?php echo ($grand_total > 1) ? '' : 'disabled' ?>" onclick="return confirm('delete all from cart?');">delete all</a>
         </div>
 
         <div class="cart-total">
             <p>grand total : <span>$<?php echo $grand_total; ?>/-</span></p>
-            <a href="shop.php" class="option-btn">continue shopping</a>
-            <a href="checkout.php" class="btn  <?php echo ($grand_total > 1) ? '' : 'disabled' ?>">proceed to checkout</a>
+            <a href="product_page.php" class="option-btn">continue shopping</a>
+            <a href="payments.php" class="btn  <?php echo ($grand_total > 1) ? '' : 'disabled' ?>">proceed to checkout</a>
         </div>
 
     </section>
