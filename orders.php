@@ -38,7 +38,7 @@ $user_id = $_SESSION['user_id'];
     <div class="box-container">
 
     <?php
-        $select_orders = mysqli_query($conn, "SELECT * FROM `orders` WHERE user_id = '$user_id'") or die('query failed');
+        $select_orders = mysqli_query($conn, "SELECT * FROM `orders` /*WHERE user_id = '$user_id'*/") or die('query failed');
         if (mysqli_num_rows($select_orders) > 0) {
             while ($fetch_orders = mysqli_fetch_assoc($select_orders)) {
     ?>

@@ -6,22 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <title>Product info</title>
+    <title>Document</title>
 </head>
 
 <body>
     <?php
-    @include 'config.php';
-
+    // start the session
     session_start();
+    $id = $_SESSION['user_id'];
 
-    $user_id = $_SESSION['user_id'];
+    //connect to the database
+    $conn = mysqli_connect("localhost", "root", "", "brief4");
 
-    /*if (!isset($user_id)) {
-            header('location:login.php');
-        };*/
+    //check connection
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
 
     //retrieve the product ID from the URL parameter
     if (isset($_GET['id'])) {
@@ -47,16 +48,16 @@
         );
 
         // if cart is empty, create a new session variable to hold cart items
-        if (!isset($_SESSION['cart_items'])) {
-            $_SESSION['cart_items'] = array();
+        if (!isset($_SESSION['caaarts'])) {
+            $_SESSION['caaarts'] = array();
         }
 
         // check if product is already in cart
         $product_exists = false;
-        foreach ($_SESSION['cart_items'] as $key => $value) {
+        foreach ($_SESSION['caaarts'] as $key => $value) {
             if ($value['product_id'] == $product_data['product_id']) {
                 // update product quantity
-                $_SESSION['cart_items'][$key]['product_quantity'] += $product_data['product_quantity'];
+                $_SESSION['caaarts'][$key]['product_quantity'] += $product_data['product_quantity'];
                 $product_exists = true;
                 break;
             }
@@ -64,22 +65,22 @@
 
         // if product is not in cart, add it to cart
         if (!$product_exists) {
-            $_SESSION['cart_items'][] = $product_data;
+            $_SESSION['caaarts'][] = $product_data;
         }
 
         // display success message
         echo 'product added to cart';
     }
 
-    //display the product details
+    // display the product details
     if (mysqli_num_rows($result) > 0) {
         $row1 = mysqli_fetch_assoc($result);
-    ?>
+        ?>
         <div class="container col-xxl-8 px-4 py-5">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-10 col-sm-8 col-lg-6">
-                    <img src="<?= $row1['img_url'] ?>" class="d-block mx-lg-auto img-fluid"
-                        alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+                    <img src="<?= $row1['img_url'] ?>" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes"
+                        width="700" height="500" loading="lazy">
                 </div>
                 <div class="col-lg-6">
                     <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">
@@ -104,71 +105,46 @@
                 </div>
             </div>
         </div>
-    <?php
+
+        <?php
     } else {
         echo "No product found.";
     }
 
     // close the database connection
+    ?>
+    <pre>
+    <?php
+
+
+    // Retrieve the data from the session
+    $cart = $_SESSION['caaarts'];
+
+    // Assign it to a variable
+    $product = $cart[0];
+
+    // Now you can use the $product variable to access the values like this:
+    $product_id = $product['product_id'];
+    $product_name = $product['product_name'];
+    $product_price = $product['product_price'];
+    $product_image = $product['product_image'];
+    $product_quantity = $product['product_quantity'];
+
+    print_r($product_image);
+    $sql = "INSERT INTO caaarts (product_id,name,price,img_url,quantity)VALUES ('$product[product_id]', '$product[product_name]', '$product[product_price]', '$product[product_image]', '$product[product_quantity]')";
+
+    // Execute the SQL statement
+    if ($conn->query($sql) === TRUE) {
+        echo "New record created successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
     mysqli_close($conn);
     ?>
-
-
-
-    <?php
-    $con = mysqli_connect("localhost", "root", "", "brief4");
-
-    if (isset($_POST['post_comment'])) {
-        $name = $_POST['name'];
-        $message = $_POST['message'];
-
-        // Check if name and message are not empty
-        if (empty($name) || empty($message)) {
-            echo "Please fill in all required fields.";
-        } else {
-            $sql1 = "INSERT INTO comments (name, comment) VALUES ('$name', '$message')";
-
-            if ($con->query($sql1) === true) {
-                echo "";
-            } else {
-                echo "Error: " . $sql1 . "<br>" . $con->error;
-            }
-        }
-    }
-
-    ?>
-    <div class="wrapper">
-        <form action="" method="post" class="form">
-            <input type="text" class="name" name="name" value="<?= $row1['name'] ?>" readonly>
-            <br>
-            <textarea name="message" rows="5" cols="50" class="message" placeholder="Message"></textarea>
-            <br>
-            <button type="submit" class="btn" name="post_comment">Post Comment</button>
-        </form>
-    </div>
-
-    <div class="content">
-        <?php
-        $sql1 = "SELECT * FROM comments";
-        $result = $con->query($sql1);
-
-        if ($result->num_rows > 0) {
-            // output data of each row
-            while ($row = $result->fetch_assoc()) {
-        ?>
-                <h4>
-                    <?php echo $row['name']; ?>
-                </h4>
-                <p>
-                    <?php echo $row['comments']; ?>
-                </p>
-        <?php
-            }
-        }
-        ?>
-    </div>
+</pre>
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
